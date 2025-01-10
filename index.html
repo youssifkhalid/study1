@@ -3,239 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الفيديوهات التعليمية المتطورة</title>
+    <title>منصة التعليم - مثل يوتيوب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        :root {
+            --primary-color: #1a73e8;
+            --background-dark: #0f0f0f;
+            --text-dark: #ffffff;
+            --background-light: #ffffff;
+            --text-light: #0f0f0f;
+            --sidebar-width: 240px;
+        }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-            line-height: 1.6;
+            background-color: var(--background-light);
+            color: var(--text-light);
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        header {
-            background: linear-gradient(135deg, #3498db, #8e44ad);
-            color: white;
-            text-align: center;
-            padding: 1rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        body.dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            animation: fadeInDown 1s ease-out;
-        }
-
-        nav {
-            background-color: #2c3e50;
-            padding: 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            position: sticky;
+        /* Header Styles */
+        .header {
+            position: fixed;
             top: 0;
-            z-index: 1000;
-        }
-
-        .subject-btn {
-            background-color: #ecf0f1;
-            color: #2c3e50;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-
-        .subject-btn:hover, .subject-btn.active {
-            background-color: #3498db;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        main {
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .video-card {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            right: 0;
+            left: 0;
+            height: 60px;
+            background-color: var(--background-light);
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: background-color 0.3s;
         }
 
-        .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        .dark-mode .header {
+            background-color: var(--background-dark);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .video-card h3 {
-            padding: 1rem;
-            background-color: #3498db;
-            color: white;
-            font-size: 1.2rem;
-            text-align: center;
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-left: 20px;
         }
 
-        .video-card iframe {
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 20px;
+        }
+
+        .search-box {
             width: 100%;
-            aspect-ratio: 16 / 9;
-            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            background-color: var(--background-light);
+            color: var(--text-light);
+        }
+
+        .dark-mode .search-box {
+            background-color: #222;
+            border-color: #444;
+            color: var(--text-dark);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            right: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - 60px);
+            background-color: var(--background-light);
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .dark-mode .sidebar {
+            background-color: var(--background-dark);
+        }
+
+        .subject-item {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .subject-item:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .dark-mode .subject-item:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .subject-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-right: var(--sidebar-width);
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        /* Video Player */
+        .video-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--background-light);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+
+        .dark-mode .video-container {
+            background-color: #1a1a1a;
+        }
+
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: black;
         }
 
         .video-info {
-            padding: 1rem;
-            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .video-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Video Grid */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .video-card {
+            background-color: var(--background-light);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s;
+        }
+
+        .dark-mode .video-card {
+            background-color: #1a1a1a;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #eee;
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: center;
         }
 
-        .video-description {
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: #666;
+        .video-card-info {
+            padding: 15px;
         }
 
-        .watch-later-btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            align-self: flex-start;
+        .video-card-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
         }
 
-        .watch-later-btn:hover {
-            background-color: #27ae60;
-        }
-
-        #watch-later-list {
+        /* Controls */
+        .controls {
             position: fixed;
-            top: 70px;
-            right: 20px;
-            background-color: white;
-            border-radius: 10px;
-            padding: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            display: none;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
         }
 
-        #watch-later-list h2 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-            color: #2c3e50;
-        }
-
-        #watch-later-list ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #watch-later-list li {
-            margin-bottom: 0.5rem;
-            padding: 0.5rem;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-
-        #toggle-watch-later {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #3498db;
-            color: white;
+        .control-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
             cursor: pointer;
-            z-index: 1001;
+            transition: background-color 0.2s;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .control-btn:hover {
+            background-color: #1557b0;
         }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
+        /* Responsive Design */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8rem;
+            .sidebar {
+                transform: translateX(100%);
             }
 
-            nav {
-                flex-direction: column;
+            .sidebar.active {
+                transform: translateX(0);
             }
 
-            .video-card {
-                width: 100%;
+            .main-content {
+                margin-right: 0;
             }
 
-            #watch-later-list {
-                right: 10px;
-                left: 10px;
-                max-width: none;
+            .video-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>منصة الفيديوهات التعليمية المتطورة</h1>
+    <header class="header">
+        <a href="#" class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            منصة التعليم
+        </a>
+        <div class="search-container">
+            <input type="search" class="search-box" placeholder="ابحث عن فيديو...">
+        </div>
+        <button class="control-btn" id="toggleSidebar">
+            <i class="fas fa-bars"></i>
+        </button>
     </header>
-    <nav id="subjects-nav"></nav>
-    <main id="video-container"></main>
-    <div id="watch-later-list">
-        <h2>قائمة المشاهدة لاحقًا</h2>
-        <ul id="watch-later-items"></ul>
+
+    <nav class="sidebar">
+        <div id="subjectsList"></div>
+    </nav>
+
+    <main class="main-content">
+        <div class="video-container">
+            <video class="video-player" id="videoPlayer" controls>
+                <source src="" type="video/mp4">
+                متصفحك لا يدعم تشغيل الفيديو
+            </video>
+            <div class="video-info">
+                <h1 class="video-title" id="videoTitle"></h1>
+            </div>
+        </div>
+
+        <div class="video-grid" id="videoGrid"></div>
+    </main>
+
+    <div class="controls">
+        <button class="control-btn" id="toggleTheme">
+            <i class="fas fa-moon"></i>
+        </button>
     </div>
-    <button id="toggle-watch-later">عرض قائمة المشاهدة لاحقًا</button>
 
     <script>
-        const subjectsData = {
+
+// تكوين البيانات والمتغيرات الأساسية
+const subjectsData = {
          
   "عربي": [
     {
       "title": "رضا الفاروق ٤ سعات المنهج كلو",
-      "url": "https://rr5---sn-hgn7rnll.googlevideo.com/videoplayback?expire=1736520578&ei=It-AZ4GoBpKrssUPtfaA6AY&ip=103.112.52.155&id=o-AMJrDZ2CfWLGa2dt25Ur6BD4gvBoHTbSAOdgGA_05HK0&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-MhMLn-K3epxnv5i939h4cb-cUggvJSoZO4mVREHERWdqqv_Sv-5cdOe0kFXlq_j5IJpTsGY8HK&spc=9kzgDYG5ubldOKnQZnTNkmXfiueZ9RAUzIshp6yaiHlpza3gwD9ZTTufN9eCrw4d6Q&vprv=1&svpuc=1&mime=video%2Fmp4&ns=eFZBf9TBcMcE9ZzD64jyqeIQ&rqh=1&gir=yes&clen=734631204&ratebypass=yes&dur=14937.977&lmt=1736398887840648&fexp=24350590,24350737,24350827,24350860,24350973,24350974,51326932,51331020,51335594,51348730,51353498,51371294&c=MWEB&sefc=1&txp=5538034&n=4erRwZu9ReCiRg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIhAJrmifDfmLB3swN9jUS6fwv717gTKFBYYm34n1faYjmxAiABtY6yeM567-AgDonCG7_VPEN2glsJnBOgsRIcknSbCQ%3D%3D&title=%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%A6%D9%8A%D8%A9%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%D8%A9%20%7C%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%202025%20%7C%20%D8%A3.%20%D8%B1%D8%B6%D8%A7%20%D8%A7%D9%84%D9%81%D8%A7%D8%B1%D9%88%D9%82&rm=sn-nnqcq-q5js7s,sn-npo6k7l&rrc=79,104&req_id=d5b41e5fb496a3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736509708,&mh=ll&mip=156.217.19.229&mm=29&mn=sn-hgn7rnll&ms=rdu&mt=1736509260&mv=m&mvi=5&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRAIgcaVuEnfrXwiYt-OuaQtEjUXzeebQdosmrTIbRDMgHucCIH-__LvtQBFbJ-RiIdPqPD55TFo4x3YcGWTurY-d08XA"
+      "url": "https://rr5---sn-hgn7rnll.googlevideo.com/videoplayback?expire=1736538896&ei=sCaBZ5DPCKq3juMPn6OA-Qo&ip=103.161.249.72&id=o-AIoebA85tH6p5w-0Sfs9UjbrIx7PneGo-4Jz62D7xG1z&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-NYgIk1x7UP2WHnXgHII3Vh0hDKwj5XRBZ5fSISHatWYoLu2N6PiF7EZEltsIn0TM8-FFKzzTyj&spc=9kzgDfs3vr-DPNqk6P_Ep4_BkqOxoOzNxmBpIX2wsqOdmQAfJ1BAyEGjNTLSnT7kAA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=aKA6YvFCPsKgfCKk2ZiHYh4Q&rqh=1&gir=yes&clen=734631204&ratebypass=yes&dur=14937.977&lmt=1736398887840648&fexp=24350590,24350737,24350827,24350860,24350974,51326932,51331020,51335594,51353497,51371294&c=MWEB&sefc=1&txp=5538034&n=RgPToqYFiawzNQ&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgOEJAf6llQGw21tAz4hp5tiDRc-oLZeGWQIsZm4H0HycCIQDX9HW_mr_A4WnWG1EpYt2Sip3i7Y0WJpXD9poXsk8hRw%3D%3D&title=%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%A6%D9%8A%D8%A9%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%D8%A9%20%7C%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%202025%20%7C%20%D8%A3.%20%D8%B1%D8%B6%D8%A7%20%D8%A7%D9%84%D9%81%D8%A7%D8%B1%D9%88%D9%82&rm=sn-ci0u5ouxaxjvh-2cie7e,sn-npo6k7l&rrc=79,104&req_id=e55f1ab49e25a3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736523258,&mh=ll&mip=156.217.19.229&mm=29&mn=sn-hgn7rnll&ms=rdu&mt=1736522960&mv=m&mvi=5&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRgIhALCQAyW4AckF0SqLVIn2ARkegMvm67CyCa1sDkSo_rT-AiEA3aojMlFrnJVTwUuHDlqJF1EUQ6xnO9RpwVruyk6krdo%3D"
     },
     {
       "title": "لايف العربي لعبتك - تانية ثانوي - أ. رضا الفاروق",
-      "url": "https://rr3---sn-hgn7rn7k.googlevideo.com/videoplayback?expire=1736518641&ei=kdeAZ_nMEfCb3LUPrKWsoQc&ip=203.28.245.187&id=o-AEbfXjIVpxvloacV1QrAcVAks-T8uEN6rJN7c0AGk6-Y&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI--A6FT_XycnzHrkJWjTrTVQ9GUo1Cn5sK7B6hHm6ZtXAKIKm0-jYtL7eGKLmJXI39Z3cNsRNCk&spc=x-caUNLJGdO9JaPuVnbI0nlZ9qRNeLS_dKlqUSPFED_9OkWoHjNfIk-qCIp2HzaYaw&vprv=1&svpuc=1&mime=video%2Fmp4&ns=bZHxg9IGficKtEzW5p0SbN0Q&rqh=1&gir=yes&clen=536086246&ratebypass=yes&dur=12683.435&lmt=1736440648417409&fexp=24350590,24350737,24350827,24350975,51326932,51331020,51335594,51353498,51358316,51371294&c=MWEB&sefc=1&txp=7209224&n=-T2M2kQiXA5mcA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgZy27HlbwJpGW94emhQjAmYdviMWSyLkiB1xTWORVUe4CIQC9-ihDdu5ULsMryUoodai4oOjFWs7ieAvxvYsuiWWQPA%3D%3D&title=%D9%84%D8%A7%D9%8A%D9%81%20%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%20%D9%84%D8%B9%D8%A8%D8%AA%D9%83%20%7C%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%7C%20%D8%A3.%20%D8%B1%D8%B6%D8%A7%20%D8%A7%D9%84%D9%81%D8%A7%D8%B1%D9%88%D9%82&rm=sn-3oxupo-h55l7l,sn-h55e67z&rrc=79,104&req_id=29a60e3749d4a3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736512055,&mh=c0&mip=156.217.19.229&mm=29&mn=sn-hgn7rn7k&ms=rdu&mt=1736511661&mv=m&mvi=3&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhAJrIwhdmi7qeW68xewZOXLAD46LufFTa7Jny6WEmn-N2AiA0yQm5CO5MDsFqbgWsuewnEKu3LS1shM5azzmfQjcU2A%3D%3D"
+      "url": "https://rr5---sn-hgn7yn7l.googlevideo.com/videoplayback?expire=1736537748&ei=NCKBZ6agMpqJg8UPvceV-Qo&ip=2401%3A4900%3A5456%3A6861%3A3400%3A8e0c%3A8305%3Af744&id=o-AC9gk2k4GI-Ryq22SCyl7tL_SaVHHZzLqroqm-n-1jGd&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-PrjR3jOXM9B4l0xfacs1ZO_WKMlZRPRWRxSWP_JzsJhT7LFcoHO7_bc2kuicHv3Gc4HCyFLzRW&spc=9kzgDdPTsgzPneAirX1HW4utV8DtCsI6wAqefRy-gepTvRZErXE4VS6MCSk7SqyPig&vprv=1&svpuc=1&mime=video%2Fmp4&ns=r9TyWUiYEZIXD2U690IoUdkQ&rqh=1&gir=yes&clen=425478855&ratebypass=yes&dur=10652.061&lmt=1736367297614793&fexp=24350590,24350737,24350757,24350827,24350860,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=7209224&n=h6DH-FpYZL4dCA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIfbcfqkZlQWL0NejS30xRetvhBilFViJosZVBj5E1YRgIhAM9A2Ynk2qQZxB35jTgmGzXWNBIJhCMNs6ay886eQNEj&title=%D9%84%D8%A7%D9%8A%D9%81%20%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%20%D9%84%D8%B9%D8%A8%D8%AA%D9%83%20%7C%20%D8%A3%D9%88%D9%84%D9%89%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%7C%20%D8%A3.%20%D8%B1%D8%B6%D8%A7%20%D8%A7%D9%84%D9%81%D8%A7%D8%B1%D9%88%D9%82&rm=sn-ci5gup-w5pl7s,sn-ci5gup-qxay7z,sn-qxae77e&rrc=79,79,104&req_id=3353fbd30738a3ee&cmsv=e&rms=nxu,au&redirect_counter=3&cms_redirect=yes&ipbypass=yes&met=1736523445,&mh=zp&mip=156.217.19.229&mm=30&mn=sn-hgn7yn7l&ms=nxu&mt=1736523151&mv=m&mvi=5&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIgC4vIrIo_dEPZQgftnbQzz4DV7obLjq6DfDI-btJMTsoCIQC_7Ef6fpu0AZ87MAz7Gi7v4vkdgLa1BhXf8PkDNGHvCQ%3D%3D"
     },
     {
       "title": "لايف ليلة الامتحان - تانية ثانوي 2025 - مع أ. محمد صلاح",
@@ -249,7 +311,7 @@
   "رياضة بحتة": [
     {
       "title": "مراجعه رياضه تانيه ثانوي الترم الاول - مراجعه جبر تانيه ثانوي الترم الاول",
-      "url": "https://rr5---sn-hgn7rn7y.googlevideo.com/videoplayback?expire=1736532636&ei=PA6BZ6qiF_uEi9oP_LHZ4AI&ip=62.201.240.150&id=o-AB7eAE9X7B14RShjtoUa18Y-a75R0K5MS4-NUj-CEcbS&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI_iV-uIXK_O3Ca9P2NdKZ-W0mqzzHG7GfjK7dACfwtTahtzbA3FhhvTVgj_rqdhflRElpHAFeOi&spc=x-caUK8n_iC7KSW4QslNcCCON7G3j_KHERWPzw2zXhxh2N51ScwDdAjwQwmTmDCbNA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=r2EoT43zn78RwKnfJ6-jRxkQ&rqh=1&gir=yes&clen=813699714&ratebypass=yes&dur=18063.104&lmt=1735655977565998&fexp=24350590,24350737,24350827,24350860,24350974,51326932,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5438434&n=MECPEoyFOoQQ4w&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir"
+      "url": "https://rr1---sn-uxaxjvhxbt2u-icxl.googlevideo.com/videoplayback?expire=1736530528&ei=_wWBZ8HePMC1p-oP0KPS-A4&ip=197.46.95.165&id=o-AMvrDBsBHuCM3-N5D6ckAJOb4YZmeWmDU41vupQn4K_2&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AfMhrI_sbLx4bNEewvExlew0_PY_2pn8S6Wuxn1FPBPdcuhWfH6nGB7mrFK67gAHXVPnHJtRcPhRPlf3&spc=x-caUMxHzA4ukQkWAAyKGfKO9QdfeFVqt0KyxZ6QdYkrm8Wi5er2H1wDUwL7mpop-Q&vprv=1&svpuc=1&mime=video%2Fmp4&ns=2VZqO6PQ4hvF8d5Ml9TKpDIQ&rqh=1&gir=yes&clen=224632146&ratebypass=yes&dur=11590.356&lmt=1734506429592443&fexp=24350590,24350737,24350827,24350859,24350974,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=COaHdz0shg1_Yw&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgJac5utty1brFUBk5ykYzXyya7EWlHzF7H6UcyCwomuACIQCxVvqvgL7Lr-WJWYbTt7aXwBkvo_c4DMnfIudOqc3k-A%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%84%D9%8A%D9%84%D8%A9%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20%D8%AC%D8%A8%D8%B1%20%D9%84%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%AA%D8%B1%D9%85%20%D8%A7%D9%88%D9%84%20%D8%B9%D9%84%D9%85%D9%8A%20%D8%8C%20%D8%A7%D8%AF%D8%A8%D9%8A%20%7C%20%D8%A7%D9%84%D8%AC%D8%B2%D8%A1%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%20%D8%AA%D9%84%D8%AE%D9%8A%D8%B5%20%D8%A7%D9%84%D8%AC%D8%A8%D8%B1%20%7C%20%D8%AD%D8%B5%D8%A9%2016&redirect_counter=1&rm=sn-5hnell7e&rrc=104&req_id=9d3205acbc59a3ee&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1736523607,&mh=Dn&mip=156.217.19.229&mm=31&mn=sn-uxaxjvhxbt2u-icxl&ms=au&mt=1736522959&mv=m&mvi=1&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhAP9xyGlYwHVN2bhpijeOXI7viqmoidpmet0rrzo_UKylAiAbeL2244HB19uH9_d0rF8ehO-9QZB1U7SszzEizhGusg%3D%3D"
     },
     {
       "title": "مراجعه تفاضل تانيه ثانوي الترم الاول - مراجعه رياضه تانيه ثانوي الترم الاول",
@@ -297,7 +359,7 @@
   "كيمياء": [
     {
       "title": "مراجعة ليله الامتحان للصف الثاني الثانوي 2025 -- م.خالد صقر",
-      "url": "https://rr5---sn-uxaxjvhxbt2u-icxs.googlevideo.com/videoplayback?expire=1736520870&ei=RuCAZ6i8OqLYs8IPmu2l0Aw&ip=2401%3A4900%3A7904%3A4c3b%3A11d0%3Ae456%3A1f23%3Ae4df&id=o-ACEQIHLc-zh-GrhxV25yllKDq4NN3Io_VocuxpBoftjk&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AfMhrI9T2blOFUo7eNyc9_Wnr3vbDuzY5kzajfDAe_xn54nhyRiRIzmjmk_IFD55VCxIoSPuNmQhVeYY&spc=x-caUKCaSNggVEQkl_v-5QS9DCWOqBn7iasUlMZXgZkKn2ZSDg360xT0ZNLSDwhP6w&vprv=1&svpuc=1&mime=video%2Fmp4&ns=JIvqnfrLzTdfr3-jVFMcmwoQ&rqh=1&gir=yes&clen=361560365&ratebypass=yes&dur=7672.035&lmt=1736227556170350&fexp=24350590,24350737,24350827,24350974,24350978,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=YooL3nJ79dIE_A&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgCriqht2C1q3La3t8yaf87Fr_HIZr5RHbP1Gcsojwuy4CIQCkHi-3Nohx9q-qx_l2Y0p5LuiDhPM3NiT5OUbg8X36Dg%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%84%D9%8A%D9%84%D9%87%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20%D9%84%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%202025%20%7C%7C%20%D9%85.%D8%AE%D8%A7%D9%84%D8%AF%20%D8%B5%D9%82%D8%B1&redirect_counter=1&rm=sn-cvhzd7s&rrc=104&req_id=be8a98d99dca3ee&cms_redirect=yes&ipbypass=yes&met=1736513621,&mh=Zw&mip=156.217.19.229&mm=31&mn=sn-uxaxjvhxbt2u-icxs&ms=au&mt=1736513110&mv=m&mvi=5&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRgIhANdXrGUZzIBAzLdbB2cOBy7Y36rDHj0-PsC3AuYpVPmcAiEAj9BulkNJVOdS2WvD7iFmS9jUIOKLKbGpvlVOAnifHq4%3D"
+      "url": "https://rr3---sn-hgn7yn7s.googlevideo.com/videoplayback?expire=1736541807&ei=DzKBZ6WYKvXFhcIPtuv9oAw&ip=2001%3A16a2%3A6b2b%3Aee00%3A41fc%3A619e%3Ace2c%3Ac75e&id=o-AAD0uh4Auf-YZ17T_RFRoBbhASEXXM_JoZsSl52SN6EU&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI_BtFh4dqmwQvTrcVkcA-zwGRErEQqUdFD51hFD5juHFoJQPIbJVOeI49hlJV4WHzWZTdhc9q9g&spc=x-caULh7u7MF0Ic5RKp9ISUWHkEKTw0eiZM2zAOSRPjJryN-U3lj8zCOordpsg2bLg&vprv=1&svpuc=1&mime=video%2Fmp4&ns=9z0MFuo56JMmnGgzr-wFyKUQ&rqh=1&gir=yes&clen=361560365&ratebypass=yes&dur=7672.035&lmt=1736227556170350&fexp=24350590,24350737,24350827,24350974,51326932,51331020,51335594,51353497,51371294&c=MWEB&sefc=1&txp=5538434&n=d6yXYIDlb5cLbQ&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIgNd3x6ETtIWgOFdvLxHE6BIBOvxcWeEpEIE7RMSBEriUCICLSrtoADabXaYKbYNwRCKkna-KjkjABXHz1pqhihak-&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%84%D9%8A%D9%84%D9%87%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20%D9%84%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%202025%20%7C%7C%20%D9%85.%D8%AE%D8%A7%D9%84%D8%AF%20%D8%B5%D9%82%D8%B1&rm=sn-nuj-g0ir7d,sn-hpa6d76&rrc=79,104&req_id=8a77657d6a57a3ee&rms=rdu,au&redirect_counter=2&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1736523854,&mh=Zw&mip=156.217.19.229&mm=29&mn=sn-hgn7yn7s&ms=rdu&mt=1736522960&mv=m&mvi=3&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRAIgDWJTAkHQKeokwCgNOow3H7vt873GqTN87jXdenG6NCwCIF69V61303Y2RRg0_kg51lMM6XqJyOAQXVUxFqdNq-gz"
     },
     {
       "title": "منهج الصف الثانى كاملاً فى محاضرة واحده🫰🏻إسمعها…تقفل الإمتحان🫡",
@@ -344,74 +406,201 @@
   ]
     };
 
-        const subjectsNav = document.getElementById('subjects-nav');
-        const videoContainer = document.getElementById('video-container');
-        const watchLaterList = document.getElementById('watch-later-list');
-        const watchLaterItems = document.getElementById('watch-later-items');
-        const toggleWatchLaterBtn = document.getElementById('toggle-watch-later');
 
-        let watchLaterVideos = JSON.parse(localStorage.getItem('watchLaterVideos')) || [];
+// Utility functions
+const safeQuerySelector = (selector) => document.querySelector(selector) || null;
+const safeAddEventListener = (element, event, handler) => {
+    if (element && typeof element.addEventListener === 'function') {
+        element.addEventListener(event, handler);
+    }
+};
 
-        function createSubjectButtons() {
-            for (const subject in subjectsData) {
-                const button = document.createElement('button');
-                button.textContent = subject;
-                button.classList.add('subject-btn');
-                button.addEventListener('click', () => displayVideos(subject));
-                subjectsNav.appendChild(button);
-            }
-        }
+// Main application class
+class EducationalPlatform {
+    constructor() {
+        this.currentSubject = null;
+        this.currentVideo = null;
+        this.isPlaying = false;
 
-        function displayVideos(subject) {
-            videoContainer.innerHTML = '';
-            subjectsData[subject].forEach(video => {
-                const videoCard = document.createElement('div');
-                videoCard.classList.add('video-card');
-                videoCard.innerHTML = `
-                    <h3>${video.title}</h3>
-                    <iframe src="${video.url}" allowfullscreen></iframe>
-                    <div class="video-info">
-                        <p class="video-description">${video.description}</p>
-                        <button class="watch-later-btn" data-title="${video.title}">إضافة إلى المشاهدة لاحقًا</button>
-                    </div>
-                `;
-                videoContainer.appendChild(videoCard);
-            });
-            addWatchLaterListeners();
-        }
+        // Cache DOM elements
+        this.elements = {
+            videoPlayer: safeQuerySelector('#videoPlayer'),
+            videoTitle: safeQuerySelector('#videoTitle'),
+            videoGrid: safeQuerySelector('#videoGrid'),
+            subjectsList: safeQuerySelector('#subjectsList'),
+            toggleTheme: safeQuerySelector('#toggleTheme'),
+            toggleSidebar: safeQuerySelector('#toggleSidebar'),
+            sidebar: safeQuerySelector('.sidebar'),
+            searchBox: safeQuerySelector('.search-box'),
+            videoContainer: safeQuerySelector('.video-container')
+        };
 
-        function addWatchLaterListeners() {
-            const watchLaterButtons = document.querySelectorAll('.watch-later-btn');
-            watchLaterButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const videoTitle = e.target.getAttribute('data-title');
-                    if (!watchLaterVideos.includes(videoTitle)) {
-                        watchLaterVideos.push(videoTitle);
-                        localStorage.setItem('watchLaterVideos', JSON.stringify(watchLaterVideos));
-                        updateWatchLaterList();
-                        e.target.textContent = 'تمت الإضافة';
-                        e.target.disabled = true;
-                    }
-                });
-            });
-        }
+        this.initialize();
+    }
 
-        function updateWatchLaterList() {
-            watchLaterItems.innerHTML = '';
-            watchLaterVideos.forEach(video => {
-                const li = document.createElement('li');
-                li.textContent = video;
-                watchLaterItems.appendChild(li);
-            });
-        }
+    initialize() {
+        this.setupEventListeners();
+        this.createSubjectsList();
+        this.setDefaultSubject();
+        this.setupVideoErrorHandling();
+    }
 
-        toggleWatchLaterBtn.addEventListener('click', () => {
-            watchLaterList.style.display = watchLaterList.style.display === 'none' ? 'block' : 'none';
+    setupEventListeners() {
+        // Theme toggle
+        safeAddEventListener(this.elements.toggleTheme, 'click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            this.elements.toggleTheme.innerHTML = isDark ? 
+                '<i class="fas fa-sun"></i>' : 
+                '<i class="fas fa-moon"></i>';
         });
 
-        createSubjectButtons();
-        displayVideos(Object.keys(subjectsData)[0]);
-        updateWatchLaterList();
+        // Sidebar toggle
+        safeAddEventListener(this.elements.toggleSidebar, 'click', () => {
+            this.elements.sidebar?.classList.toggle('active');
+        });
+
+        // Search functionality
+        safeAddEventListener(this.elements.searchBox, 'input', (e) => {
+            this.filterVideos(e.target.value);
+        });
+
+        // Video player events
+        if (this.elements.videoPlayer) {
+            safeAddEventListener(this.elements.videoPlayer, 'error', this.handleVideoError.bind(this));
+            safeAddEventListener(this.elements.videoPlayer, 'loadeddata', () => {
+                console.log('Video loaded successfully');
+            });
+        }
+    }
+
+    handleVideoError(error) {
+        console.error('Video Error:', error);
+        // Show user-friendly error message
+        if (this.elements.videoContainer) {
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'video-error-message';
+            errorMessage.textContent = 'عذراً، حدث خطأ أثناء تحميل الفيديو. يرجى المحاولة مرة أخرى.';
+            this.elements.videoContainer.appendChild(errorMessage);
+        }
+    }
+
+    setupVideoErrorHandling() {
+        if (this.elements.videoPlayer) {
+            this.elements.videoPlayer.onerror = this.handleVideoError.bind(this);
+        }
+    }
+
+    createSubjectsList() {
+        if (!this.elements.subjectsList) return;
+
+        Object.keys(subjectsData).forEach(subject => {
+            const subjectElement = document.createElement('div');
+            subjectElement.className = 'subject-item';
+            subjectElement.textContent = subject;
+            
+            safeAddEventListener(subjectElement, 'click', () => {
+                this.selectSubject(subject, subjectElement);
+            });
+
+            this.elements.subjectsList.appendChild(subjectElement);
+        });
+    }
+
+    selectSubject(subject, element) {
+        const subjectItems = document.querySelectorAll('.subject-item');
+        subjectItems.forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+        this.currentSubject = subject;
+        this.createVideoGrid(subject);
+    }
+
+    setDefaultSubject() {
+        const firstSubject = Object.keys(subjectsData)[0];
+        const firstSubjectElement = this.elements.subjectsList?.firstElementChild;
+        if (firstSubject && firstSubjectElement) {
+            this.selectSubject(firstSubject, firstSubjectElement);
+        }
+    }
+
+    createVideoGrid(subject, searchTerm = '') {
+        if (!this.elements.videoGrid) return;
+
+        this.elements.videoGrid.innerHTML = '';
+        const videos = subjectsData[subject] || [];
+        
+        videos.forEach(video => {
+            if (searchTerm && !video.title.toLowerCase().includes(searchTerm.toLowerCase())) return;
+            
+            const videoCard = this.createVideoCard(video);
+            this.elements.videoGrid.appendChild(videoCard);
+        });
+    }
+
+    createVideoCard(video) {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        
+        videoCard.innerHTML = `
+            <div class="video-thumbnail">
+                <img src="${video.thumbnail}" alt="${video.title}" onerror="this.src='/default-thumbnail.jpg'">
+                <div class="play-icon">
+                    <i class="fas fa-play-circle fa-3x"></i>
+                </div>
+            </div>
+            <div class="video-card-info">
+                <h3 class="video-card-title">${video.title}</h3>
+            </div>
+        `;
+
+        safeAddEventListener(videoCard, 'click', () => {
+            this.playVideo(video);
+        });
+
+        return videoCard;
+    }
+
+    async playVideo(video) {
+        if (!this.elements.videoPlayer || !this.elements.videoTitle) return;
+
+        try {
+            // Reset previous error messages
+            const errorMessages = document.querySelectorAll('.video-error-message');
+            errorMessages.forEach(msg => msg.remove());
+
+            // Update video source and title
+            this.elements.videoPlayer.src = video.url;
+            this.elements.videoTitle.textContent = video.title;
+            this.currentVideo = video;
+
+            // Load and play video
+            await this.elements.videoPlayer.load();
+            await this.elements.videoPlayer.play();
+
+            // Scroll to video
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        } catch (error) {
+            console.error('Error playing video:', error);
+            this.handleVideoError(error);
+        }
+    }
+
+    filterVideos(searchTerm) {
+        if (this.currentSubject) {
+            this.createVideoGrid(this.currentSubject, searchTerm);
+        }
+    }
+}
+
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        window.educationalPlatform = new EducationalPlatform();
+    } catch (error) {
+        console.error('Error initializing application:', error);
+    }
+});
     </script>
 </body>
 </html>
