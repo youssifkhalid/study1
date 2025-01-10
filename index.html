@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الفيديوهات التعليمية المتطورة</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        nav {
+            background-color: #2c3e50;
+            padding: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .subject-btn {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .subject-btn:hover, .subject-btn.active {
+            background-color: #3498db;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        main {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .video-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-card h3 {
+            padding: 1rem;
+            background-color: #3498db;
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .video-card iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: none;
+        }
+
+        .video-info {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .video-description {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .watch-later-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .watch-later-btn:hover {
+            background-color: #27ae60;
+        }
+
+        #watch-later-list {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        #watch-later-list h2 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+
+        #watch-later-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #watch-later-list li {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        #toggle-watch-later {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+
+            .video-card {
+                width: 100%;
+            }
+
+            #watch-later-list {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>منصة الفيديوهات التعليمية المتطورة</h1>
+    </header>
+    <nav id="subjects-nav"></nav>
+    <main id="video-container"></main>
+    <div id="watch-later-list">
+        <h2>قائمة المشاهدة لاحقًا</h2>
+        <ul id="watch-later-items"></ul>
+    </div>
+    <button id="toggle-watch-later">عرض قائمة المشاهدة لاحقًا</button>
+
+    <script>
+        const subjectsData = {
+         
+  "عربي": [
+    {
+      "title": "رضا الفاروق ٤ سعات المنهج كلو",
+      "url": "https://rr5---sn-hgn7rnll.googlevideo.com/videoplayback?expire=1736520578&ei=It-AZ4GoBpKrssUPtfaA6AY&ip=103.112.52.155&id=o-AMJrDZ2CfWLGa2dt25Ur6BD4gvBoHTbSAOdgGA_05HK0&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-MhMLn-K3epxnv5i939h4cb-cUggvJSoZO4mVREHERWdqqv_Sv-5cdOe0kFXlq_j5IJpTsGY8HK&spc=9kzgDYG5ubldOKnQZnTNkmXfiueZ9RAUzIshp6yaiHlpza3gwD9ZTTufN9eCrw4d6Q&vprv=1&svpuc=1&mime=video%2Fmp4&ns=eFZBf9TBcMcE9ZzD64jyqeIQ&rqh=1&gir=yes&clen=734631204&ratebypass=yes&dur=14937.977&lmt=1736398887840648&fexp=24350590,24350737,24350827,24350860,24350973,24350974,51326932,51331020,51335594,51348730,51353498,51371294&c=MWEB&sefc=1&txp=5538034&n=4erRwZu9ReCiRg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIhAJrmifDfmLB3swN9jUS6fwv717gTKFBYYm34n1faYjmxAiABtY6yeM567-AgDonCG7_VPEN2glsJnBOgsRIcknSbCQ%3D%3D&title=%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%A6%D9%8A%D8%A9%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%D8%A9%20%7C%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%202025%20%7C%20%D8%A3.%20%D8%B1%D8%B6%D8%A7%20%D8%A7%D9%84%D9%81%D8%A7%D8%B1%D9%88%D9%82&rm=sn-nnqcq-q5js7s,sn-npo6k7l&rrc=79,104&req_id=d5b41e5fb496a3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736509708,&mh=ll&mip=156.217.19.229&mm=29&mn=sn-hgn7rnll&ms=rdu&mt=1736509260&mv=m&mvi=5&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRAIgcaVuEnfrXwiYt-OuaQtEjUXzeebQdosmrTIbRDMgHucCIH-__LvtQBFbJ-RiIdPqPD55TFo4x3YcGWTurY-d08XA"
+    },
+    {
+      "title": "لايف العربي لعبتك - تانية ثانوي - أ. رضا الفاروق",
+      "url": "https://rr3---sn-hgn7rn7k.googlevideo.com/videoplayback?expire=1736518641&ei=kdeAZ_nMEfCb3LUPrKWsoQc&ip=203.28.245.187&id=o-AEbfXjIVpxvloacV1QrAcVAks-T8uEN6rJN7c0AGk6-Y&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI--A6FT_XycnzHrkJWjTrTVQ9GUo1Cn5sK7B6hHm6ZtXAKIKm0-jYtL7eGKLmJXI39Z3cNsRNCk&spc=x-caUNLJGdO9JaPuVnbI0nlZ9qRNeLS_dKlqUSPFED_9OkWoHjNfIk-qCIp2HzaYaw&vprv=1&svpuc=1&mime=video%2Fmp4&ns=bZHxg9IGficKtEzW5p0SbN0Q&rqh=1&gir=yes&clen=536086246&ratebypass=yes&dur=12683.435&lmt=1736440648417409&fexp=24350590,24350737,24350827,24350975,51326932,51331020,51335594,51353498,51358316,51371294&c=MWEB&sefc=1&txp=7209224&n=-T2M2kQiXA5mcA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgZy27HlbwJpGW94emhQjAmYdviMWSyLkiB1xTWORVUe4CIQC9-ihDdu5ULsMryUoodai4oOjFWs7ieAvxvYsuiWWQPA%3D%3D&title=%D9%84%D8%A7%D9%8A%D9%81%20%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%20%D9%84%D8%B9%D8%A8%D8%AA%D9%83%20%7C%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%7C%20%D8%A3.%20%D8%B1%D8%B6%D8%A7%20%D8%A7%D9%84%D9%81%D8%A7%D8%B1%D9%88%D9%82&rm=sn-3oxupo-h55l7l,sn-h55e67z&rrc=79,104&req_id=29a60e3749d4a3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736512055,&mh=c0&mip=156.217.19.229&mm=29&mn=sn-hgn7rn7k&ms=rdu&mt=1736511661&mv=m&mvi=3&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhAJrIwhdmi7qeW68xewZOXLAD46LufFTa7Jny6WEmn-N2AiA0yQm5CO5MDsFqbgWsuewnEKu3LS1shM5azzmfQjcU2A%3D%3D"
+    },
+    {
+      "title": "لايف ليلة الامتحان - تانية ثانوي 2025 - مع أ. محمد صلاح",
+      "url": "https://rr4---sn-hgn7ynek.googlevideo.com/videoplayback?expire=1736532430&ei=bg2BZ-SeHLfMi9oPjsTo2As&ip=79.125.193.32&id=o-ACSzZOcgQQLV6laPAh7KI7cZaqN1uk0O0_AsMtejU3Iw&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI_ETl-Pi3cTwDXZbab-tsB1KizvZjm2ndRmggzHtC03YCRu2ieJN9Df4MAJgmO5hESUMWvSE_tR&spc=x-caUBfKqYHSIa1kjTedXBIXidD16xKSUGvsX4HyzBCz313GhhX5pyLwvs1ZEo8LUQ&vprv=1&svpuc=1&mime=video%2Fmp4&ns=eCS-fpzhxFRcQvql1Z80lBoQ&rqh=1&gir=yes&clen=255793094&ratebypass=yes&dur=7272.721&lmt=1736364647038801&fexp=24350590,24350737,24350827,24350860,24350974,51326932,51331020,51335594,51353497,51371294&c=MWEB&sefc=1&txp=7309224&n=Zj5Ml0AW8uE3PA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgATR0zqLPV9qwHIbVf-j9TKsf3by_dpjFzhymoWPWrY8CIQDo1967Jxp_ZbtXg6AflBzYRpLRcDRW9uz9vnPk2Fv5Ew%3D%3D&title=%D9%84%D8%A7%D9%8A%D9%81%20%D9%84%D9%8A%D9%84%D8%A9%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20%7C%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%202025%20%7C%20%D9%85%D8%B9%20%D8%A3.%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%B5%D9%84%D8%A7%D8%AD&rm=sn-uxax3vhh3-n32l7s,sn-nv4sr7e&rrc=79,104&req_id=623f9b1c0b24a3ee&rms=rdu,au&redirect_counter=2&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1736512113,&mh=r_&mip=156.217.19.229&mm=29&mn=sn-hgn7ynek&ms=rdu&mt=1736510181&mv=u&mvi=4&pl=12&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRgIhAKV-ywLO-rQ6YTd84j02a_52WjrE-MmnPq5imhW1wYVJAiEAp3Px_aid96rnXoFQCvUOqAboDjjw0Q9FzOeOYqVTEE8%3D"
+    },
+    {
+      "title": "المحاضرة الأولى من المراجعة النهائية - تانية ثانوي 2025 - أ. محمد صلاح",
+      "url": "https://rr5---sn-hgn7yn7z.googlevideo.com/videoplayback?expire=1736531225&ei=uQiBZ8qJHvTY1d8Pt56U2QU&ip=14.226.78.97&id=o-ANt1wbvr4pFaBofLEJlzx2K9W6ih3Jioju03AH_b0yim&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-MRB6sTxT2Rnc7a8y9bLgWV3mbL1cz5aW7-xZ9ErvzAhxUjPaZA-WfV4WBVDIR9JdAYqLxrLk55&spc=9kzgDVSLUQml6dD-HxNqFMcymZ-iO2ZUAtvshKKvloOr1g0VaeAURyBkMAX1b75S-g&vprv=1&svpuc=1&mime=video%2Fmp4&ns=K2PWTUZTZLojBxoUQer7D9wQ&rqh=1&gir=yes&clen=657265375&ratebypass=yes&dur=12788.064&lmt=1735832733265646&fexp=24350590,24350737,24350827,24350975,51326932,51331020,51335594,51353497,51371294&c=MWEB&sefc=1&txp=5538434&n=5fB-E6uybIfpNg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIhAMx39Wu19N76JOD49mPUsVwSioJ6FAg-IzXNI1Bh6Y0bAiBoRcfLvCHYHnpcmfQ8NY4318gKyU6MVLf0ls1bU5cM_Q%3D%3D&title=%D8%A7%D9%84%D9%85%D8%AD%D8%A7%D8%B6%D8%B1%D8%A9%20%D8%A7%D9%84%D8%A3%D9%88%D9%84%D9%89%20%D9%85%D9%86%20%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%A6%D9%8A%D8%A9%20%7C%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%202025%20%7C%20%D8%A3.%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%B5%D9%84%D8%A7%D8%AD&rm=sn-8qj-i5ok77e,sn-8qj-i5o667s,sn-i3bdk7e&rrc=79,79,104&req_id=1f58b88f30b2a3ee&cmsv=e&rms=nxu,au&redirect_counter=3&cms_redirect=yes&ipbypass=yes&met=1736511737,&mh=UU&mip=156.217.19.229&mm=30&mn=sn-hgn7yn7z&ms=nxu&mt=1736511388&mv=m&mvi=5&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRgIhALhlHG3vWoaBmpJ2V9wa7GZveaX7Ax03RfePCX7uswmbAiEAxa7aMoL3Ccy8lE7gefvjJhfdjY1SL5dmYTjMQwKNM-g%3D"
+    }
+  ],
+  "رياضة بحتة": [
+    {
+      "title": "مراجعه رياضه تانيه ثانوي الترم الاول - مراجعه جبر تانيه ثانوي الترم الاول",
+      "url": "https://rr5---sn-hgn7rn7y.googlevideo.com/videoplayback?expire=1736532636&ei=PA6BZ6qiF_uEi9oP_LHZ4AI&ip=62.201.240.150&id=o-AB7eAE9X7B14RShjtoUa18Y-a75R0K5MS4-NUj-CEcbS&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI_iV-uIXK_O3Ca9P2NdKZ-W0mqzzHG7GfjK7dACfwtTahtzbA3FhhvTVgj_rqdhflRElpHAFeOi&spc=x-caUK8n_iC7KSW4QslNcCCON7G3j_KHERWPzw2zXhxh2N51ScwDdAjwQwmTmDCbNA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=r2EoT43zn78RwKnfJ6-jRxkQ&rqh=1&gir=yes&clen=813699714&ratebypass=yes&dur=18063.104&lmt=1735655977565998&fexp=24350590,24350737,24350827,24350860,24350974,51326932,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5438434&n=MECPEoyFOoQQ4w&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir"
+    },
+    {
+      "title": "مراجعه تفاضل تانيه ثانوي الترم الاول - مراجعه رياضه تانيه ثانوي الترم الاول",
+      "url": "https://rr4---sn-hgn7rnee.googlevideo.com/videoplayback?expire=1736533409&ei=QRGBZ5fKKLvRjuMP4Y6JwAU&ip=103.167.194.168&id=o-AOLWdPN7BdyJ6jyjVbrQomVKyNG2C9mazf9CzevF-56n&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-NYp37JwrF9M6z20fo9OnqIOAx1zWgnWKuG7kdNCVTpNA48tHvofABj4BFTp0Y02Kam-4Uq7tOQ&spc=9kzgDXs4VgJyuvAYr-yCbRLdnVxB9wDHXmFgW-SV7LvobtiSfi6FT69YfrR3J0x9uA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=7HeTABm4E-GEFZJmce3a0ksQ&rqh=1&gir=yes&clen=443444102&ratebypass=yes&dur=9841.197&lmt=1735745184237903&fexp=24350590,24350732,24350737,24350827,24350860,24350973,24350974,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5438434&n=eQFTgtYpr1vNUw&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIgGNTDjP9G_vVLeTgOo2N2fGnret-9v2qjFZGRknXIj4oCIGAQRV1adgChhYoV2nLZcxSphqgLaoEF28fZ8Q3ewVzz&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D8%AA%D9%81%D8%A7%D8%B6%D9%84%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%20%7C%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D8%B1%D9%8A%D8%A7%D8%B6%D9%87%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%20%7C%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D9%84%D9%8A%D9%84%D9%87%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86&rm=sn-g5qpoxu-w5pe7l,sn-qxaee76&rrc=79,104&req_id=c2417f0f9808a3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736511828,&mh=Xe&mip=156.217.19.229&mm=29&mn=sn-hgn7rnee&ms=rdu&mt=1736511421&mv=m&mvi=4&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIgC8Qg5IFlDxIjs6wZPICGkJUBncoYeZpgzuK8VDZpTXUCIQC6oaKF2YYc_FX_KSnssEGzZSfgAuOysC-hGpolMkNosA%3D%3D"
+    },
+    {
+      "title": "مراجعه حساب مثلثات تانيه ثانوي الترم الاول - مراجعه رياضه تانيه ثانوي",
+      "url": "https://rr2---sn-hgn7yn7l.googlevideo.com/videoplayback?expire=1736532565&ei=9Q2BZ6CiJcO8ssUP1tbQsQE&ip=36.71.136.223&id=o-AE7DP60MHjBJmti8yFYcxoiGf8SEQ3KRWtkf0k_5TgT1&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-N8b8Hf3hHwtUCgmEheMiGTPSl_pH7HByn_9Ckqkk-jn-jPB7OvPChg1fxAdlXdB2f4xo6RFiCo&spc=9kzgDV6c3WUOCcSgizW5PVz3QCWbm4rKpQ9mqBC_MfNj2L7Ge0a_TZOyT0D2qjsi2g&vprv=1&svpuc=1&mime=video%2Fmp4&ns=RKU_XowEnBxGfmkZdoH7e6wQ&rqh=1&gir=yes&clen=208973152&ratebypass=yes&dur=6064.355&lmt=1736357128056337&fexp=24350590,24350737,24350827,24350973,24350974,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=6309224&n=vZRo-noYRWkX1A&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRgIhALany-WkKg0wQBh1-Zn71UCND7712teznb95I5O83O-KAiEA3W5vnBNXFycuGai1ZuLCfk3B0m0vc_fbMbTF_vrhRNk%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D8%AD%D8%B3%D8%A7%D8%A8%20%D9%85%D8%AB%D9%84%D8%AB%D8%A7%D8%AA%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%20%7C%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D8%B1%D9%8A%D8%A7%D8%B6%D9%87%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%20%7C%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%A6%D9%8A%D9%87&rm=sn-2uuxa3vh-3ovl7k,sn-npose7l&rrc=79,104&req_id=97de0639167ba3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736512297,&mh=mC&mip=156.217.19.229&mm=29&mn=sn-hgn7yn7l&ms=rdu&mt=1736511905&mv=m&mvi=2&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhALADGBg9pJdOMZJ0TucQ8I0ZspiwmTY-XPap1urzyMAgAiBojXu7rRejzumv9tolVBQg7G1U_aojrNFL-o6ey9F7JA%3D%3D"
+    }
+  ],
+  "علم نفس": [
+    {
+      "title": "مراجعه علم نفس واجتماع تانيه ثانوي الترم الاول 2025",
+      "url": "https://rr3---sn-uxaxjvhxbt2u-icxs.googlevideo.com/videoplayback?expire=1736532843&ei=Cw-BZ8OcFr-39fwProvqkQk&ip=2401%3A4900%3A1c7a%3A934b%3Af13e%3A8e16%3A1aee%3A35e3&id=o-AAgSVFjiIFOt-wwbo-EvPguFlHBequyRxfnTtkDvIWWy&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AY2Et-NWRaPxL7BWnyAJmjccKPYNlQKF8141Tbi1OOthqiVFhOebxUYDuhg6OB9cDvZBZuRX0Wv87d62&spc=9kzgDeYttxHOwrP9SBsDw_qVLcamgJSPZpffvmV8_ltygkd84EvV3inqP_sK4nU53w&vprv=1&svpuc=1&mime=video%2Fmp4&ns=lX-PhO6YMWCuUaapK_5C9uAQ&rqh=1&gir=yes&clen=968333930&ratebypass=yes&dur=12954.691&lmt=1736177953496776&fexp=24350590,24350737,24350827,24350859,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=6309224&n=hoK0z9eXh1iCJg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIgK-rgrUdXwu9PS7ogdkFCGjDbdkyOLfRLXi5zbNTi90gCICjzF3n-cCbQQ6sJh-vKTn96Sh1cBkcbUzmn1ZFr2I2o&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D8%B9%D9%84%D9%85%20%D9%86%D9%81%D8%B3%20%D9%88%D8%A7%D8%AC%D8%AA%D9%85%D8%A7%D8%B9%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%202025%20-%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%84%D9%8A%D9%84%D8%A9%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86&redirect_counter=1&rm=sn-qxal77l&rrc=104&req_id=6c564d4b01aaa3ee&cms_redirect=yes&ipbypass=yes&met=1736512333,&mh=hP&mip=156.217.19.229&mm=31&mn=sn-uxaxjvhxbt2u-icxs&ms=au&mt=1736511908&mv=m&mvi=3&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhALPVesw2NPCNL4Ggrz8PZAro5mQwVfa4CCKDZXffwsmjAiA7NbzBuhKr69Iea3ETTCxGYdRRYzl_mK8zJ5ibGFayqw%3D%3D"
+    }
+  ],
+  "جغرافيا": [
+    {
+      "title": "مراجعة جغرافيا تانية ثانوى ليلة الامتحان - الترم الأول",
+      "url": "https://rr1---sn-hgn7rne7.googlevideo.com/videoplayback?expire=1736533965&ei=bROBZ_qxGbPe7OsPi5bOyAw&ip=2001%3A4455%3A4cb%3A2e00%3A1817%3A211c%3A3dd0%3Acd3d&id=o-AJ0KMbNFjjmkOTCdld6nQbD5r20kMnljJRgNEusJVImM&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI94ZbhPU6BBWO0wz8ZNujLxa156M-UamSjdHFXVaK-BIu7gNpSy7XIu5EN-cuzadko5eLR1zgwd&spc=x-caUDE3p0W1RCpdO3TFZ_qUOPWCt9GnIGNuQmUO7zrzVrQoTQVK-GYHDE2mDPfBcg&vprv=1&svpuc=1&mime=video%2Fmp4&ns=0ic-wAT1lVduvYoVLB1hlREQ&rqh=1&gir=yes&clen=104778662&ratebypass=yes&dur=5198.994&lmt=1735134241211254&fexp=24350590,24350737,24350757,24350827,24350860,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5438434&n=OiN9bhb4VDEOYg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIhAJwY_6s87_SO7POSGrFQpfqN-E3iH-2mMAB8AKSgjOpaAiBiU-1v1DzMftjPFgrMFQwqxjF0qSqISTmPRqKVoZyhUw%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%AC%D8%BA%D8%B1%D8%A7%D9%81%D9%8A%D8%A7%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%89%20%D9%84%D9%8A%D9%84%D8%A9%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20%7C%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A3%D9%88%D9%84&rm=sn-2aqu-jbtk7k,sn-2aqu-hoale7z,sn-i3b6k7e&rrc=79,79,104&req_id=ea33febfebeca3ee&cmsv=e&rms=nxu,au&redirect_counter=3&cms_redirect=yes&ipbypass=yes&met=1736512388,&mh=sP&mip=156.217.19.229&mm=30&mn=sn-hgn7rne7&ms=nxu&mt=1736512113&mv=m&mvi=1&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhAOf5_ny5uZJ2-lNp_B3aC1uAGt9vxwbKwNYlCqS-9aRvAiAJ-vqFeQ7SdxaYQQ5lbz9i70IL4yUs71kkAPNe1Tztpg%3D%3D"
+    },
+    {
+      "title": "مراجعة جغرافيا تانية ثانوي الترم الاول 2025 - المنهج كامل",
+      "url": "https://rr1---sn-hgn7yn76.googlevideo.com/videoplayback?expire=1736534017&ei=oROBZ4uRKqjx2roPsZGnqQQ&ip=103.120.51.63&id=o-AHA5jJotvLIKIGeDdyoN9lF-S4zCbtPlFQALh29jNDXD&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-PM27PlH6Fupb80ZZqq0d09h9sGOWpfBx8hawdbQqxhNmodKsugrZyhKBesWyyugfUIA_Lc2yWD&spc=9kzgDc3_bNCNy6DtVo6PYIjkYAkezVKjPmxtPko65RSgRPtEtQ66TsGHZG8Ba90HlA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=boDJvvTXmVbc2i_m7WRH7d8Q&rqh=1&gir=yes&clen=241216999&ratebypass=yes&dur=5022.452&lmt=1735592437171950&fexp=24350590,24350737,24350827,24350860,24350974,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5438434&n=4I99X-Sd1MQK7A&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIhAM67mJAiWdZbt90YpKtyA7b1dHwl9-M_F6KpdwrHVJ3bAiBgGeJnGEZIrbaqFHizDqid5eprC_rfwFoxj5RvNwOdkA%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%AC%D8%BA%D8%B1%D8%A7%D9%81%D9%8A%D8%A7%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%202025%20-%20%D8%A7%D9%84%D9%85%D9%86%D9%87%D8%AC%20%D9%83%D8%A7%D9%85%D9%84&rm=sn-xmjpuxa-itqz7z,sn-cvhzd76&rrc=79,104&req_id=12de75357ca9a3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736512433,&mh=Fk&mip=156.217.19.229&mm=29&mn=sn-hgn7yn76&ms=rdu&mt=1736512145&mv=m&mvi=1&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIgGSrU51JiRVsU1FWxB-MM_p_r0KNrl42WHLpZQ9x5TK4CIQD-8lsdeyXaYtgpE50mTXZ6Em9FN-EWxVwxjTzc58oBFw%3D%3D"
+    },
+    {
+      "title": "مراجعة ليلة الامتحان - جغرافيا تانية ثانوي ترم أول 2024 - المنهج كامل",
+      "url": "https://rr3---sn-hgn7rne7.googlevideo.com/videoplayback?expire=1736534069&ei=1ROBZ7nkNODZssUPo8D5gAU&ip=49.206.44.172&id=o-AIsoyxtHTWRjFlW1psaMvZE1PlWQht61FhWHBhuLPAE7&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-Pgf3ARhVDnt89Zjmsg2eL2vYlXK1hzE2504u1Gdbucj7devEIGpgDu5t_sMLNZ7hrN2wU6KARD&spc=9kzgDUJ7idCEVKn9cUoffYocQbIXlTh_lcljphGo80Sd7WKav7PYYgPVwFc0hXFOMQ&vprv=1&svpuc=1&mime=video%2Fmp4&ns=3QdOv5yWHhXnIfJpdx-tRRcQ&rqh=1&gir=yes&clen=342948979&ratebypass=yes&dur=7579.736&lmt=1705356852669054&fexp=24350590,24350737,24350827,24350974,51326932,51331020,51335594,51353497,51371294&c=MWEB&sefc=1&txp=5438434&n=OGXJIx8oo-OddA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIgaYGbL2rf_YtKvSR2T4U6ejSiRUB9CL7aGdSrK3dntAACIE4hkCwBgHG-zpQM4417Av-NMbB3AuRrgM916avSTHih&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%84%D9%8A%D9%84%D8%A9%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20-%20%D8%AC%D8%BA%D8%B1%D8%A7%D9%81%D9%8A%D8%A7%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%AA%D8%B1%D9%85%20%D8%A3%D9%88%D9%84%202024%20%7C%20%D8%A7%D9%84%D9%85%D9%86%D9%87%D8%AC%20%D9%83%D8%A7%D9%85%D9%84&rm=sn-5jucgv5qc5oq-itqy7e,sn-h55ey7l&rrc=79,104&req_id=9b22769cd432a3ee&cmsv=e&rms=nxu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736512487,&mh=4z&mip=156.217.19.229&mm=30&mn=sn-hgn7rne7&ms=nxu&mt=1736512113&mv=m&mvi=3&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRgIhAMX8zX9jVr0H-vPZ4HN8U5Mw8GZ2ME-pHDTgBnd2ETwiAiEAkupEfa6MqUptSkBk4hqxr-X0GE4BgdkJEsnpyvo2VHM%3D"
+    }
+  ],
+  "أحياء": [
+    {
+      "title": "مفاجأه لتانيه ثانوى هدية🎁جمعتلكم المنهج كاملاً فى محاضره واحده تسمعها وتقفل",
+      "url": "https://rr2---sn-uxaxjvhxbt2u-icxd.googlevideo.com/videoplayback?expire=1736535061&ei=tReBZ_nHLqCBkucPsIC7qAk&ip=91.242.123.213&id=o-AGiFs0OX1JbuZELwUbVwfNLSDcIpnJGfLEQ09TPtVegl&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AfMhrI_K17pVX8mwN6zGC0wDlncfWAvMdN3jM4OoRQKcOgbpkvzPdoJKW7GmCTn4AIE9ZoO-aE42EAot&spc=x-caUM0Mxi-yo6oxrhIXKR-C_XUCwPpkIkYzctr83u4VN3c8430qFOYj_km-XDIoig&vprv=1&svpuc=1&mime=video%2Fmp4&ns=tTL5nAhEiK091omZD1wVDLgQ&rqh=1&gir=yes&clen=1382803104&ratebypass=yes&dur=24492.617&lmt=1736419264754478&fexp=24350590,24350737,24350827,24350859,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=WhLn7Bt5qzxvhA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRgIhAPJe1FcA5R4zfJcoEnkHEk8KBk2-mF3CmMZ57LemIIeKAiEAh7S-tL2quLA67BaZJ2Sg4HNwp1X1sNUgXdsE40m9yX4%3D&title=%D9%85%D9%81%D8%A7%D8%AC%D8%A3%D9%87%20%D9%84%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%89%20%D9%87%D8%AF%D9%8A%D8%A9%F0%9F%8E%81%D8%AC%D9%85%D8%B9%D8%AA%D9%84%D9%83%D9%85%20%D8%A7%D9%84%D9%85%D9%86%D9%87%D8%AC%20%D9%83%D8%A7%D9%85%D9%84%D8%A7%D9%8B%20%D9%81%D9%89%20%D9%85%D8%AD%D8%A7%D8%B6%D8%B1%D9%87%20%D9%88%D8%A7%D8%AD%D8%AF%D9%87%20%D8%AA%D8%B3%D9%85%D8%B9%D9%87%D8%A7%20%D9%88%D8%AA%D9%82%D9%81%D9%84%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%F0%9F%9A%80%E2%9C%85%E2%9D%A3%EF%B8%8F&redirect_counter=1&rm=sn-ab5els76&rrc=104&req_id=8f4fc885e3c7a3ee&cms_redirect=yes&ipbypass=yes&met=1736513477,&mh=vd&mip=156.217.19.229&mm=31&mn=sn-uxaxjvhxbt2u-icxd&ms=au&mt=1736513110&mv=m&mvi=2&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRgIhAMT4nFYJ9l-F679PfU51pWypMnroVzwaQslqlTQLvEimAiEA6oxrUmbU-MAUBeBsdzKvp5oR_470ePd7CaFuur0iFcU%3D"
+    },
+    {
+      "title": "مراجعة انجز الاحياء في 10 أوراق مراجعة منهج الاحياء تانية ثانوي كامل ( شر",
+      "url": "https://rr3---sn-uxaxjvhxbt2u-icxs.googlevideo.com/videoplayback?expire=1736535111&ei=5xeBZ5XlKfa2kucP05CxgAU&ip=66.180.147.187&id=o-ACjs87YlmM1mdxeHy6DdjTknYUlRFVazmz9u7jl3Lld2&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AfMhrI9BV8clVJ_XNzctbAOcWwQxzOwyKTQAMNTsj7MAFX5ahCSvbH7SW1avF6fo53wS3_FPD65ssPhK&spc=x-caUL06apKSuNeUNMBgwKMMIHbj4lu6pUppbWiq08E8GHs5Ah3UvHBi0gFMjLPZwA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=X01O_psMGnuMX7atCvSl3CQQ&rqh=1&gir=yes&clen=1186722933&ratebypass=yes&dur=23391.016&lmt=1735050743863118&fexp=24350590,24350737,24350827,24350859,24350974,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5438434&n=QEyCLqO62G224g&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgb4Hay92Zor6FExSf5Hwgw6T-R2g5sKI9YGGVvBsXYv8CIQDs99la6146YRF5Dfwbmz3f4JnpUqYodATZAFJe1bDEdw%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%A7%D9%86%D8%AC%D8%B2%20%D8%A7%D9%84%D8%A7%D8%AD%D9%8A%D8%A7%D8%A1%20%D9%81%D9%8A%2010%20%D8%A3%D9%88%D8%B1%D8%A7%D9%82%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%85%D9%86%D9%87%D8%AC%20%D8%A7%D9%84%D8%A7%D8%AD%D9%8A%D8%A7%D8%A1%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D9%83%D8%A7%D9%85%D9%84%20(%20%D8%B4%D8%B1%D8%AD%20%2B%20%D8%AD%D9%84%20)&redirect_counter=1&rm=sn-ab5elz7s&rrc=104&req_id=93de5390775aa3ee&cms_redirect=yes&ipbypass=yes&met=1736513525,&mh=Dk&mip=156.217.19.229&mm=31&mn=sn-uxaxjvhxbt2u-icxs&ms=au&mt=1736513110&mv=m&mvi=3&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRAIgEik9HTEoVT5xRcXfU9lYO_c5nBM_5d-XjFxxKaLGmhMCIC4RzbijAXrDV7zaKTHmCLL6rAHLL4GdMgmfVg133KVJ"
+    },
+    {
+      "title": "المراجعة النهائية تانية ثانوي 2024 📢النبات كاملًا في أقل من ساعتين 😎",
+      "url": "https://rr5---sn-hgn7rn7k.googlevideo.com/videoplayback?expire=1736535163&ei=GxiBZ7npN7PGi9oP1YqB-Qg&ip=151.236.176.85&id=o-APn4-yB9blSq6cntwpYw4M5V72yf6LYMEOHEH8Q_XECR&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI_-9HIRM-fc9TDGGiHlCGjfZxN4TmOEaUZtPBSUUfVl_QSubNLqavOJYA5f_IcG-c6YnPscmJHK&spc=x-caUGLNr919k9o_a-HJL9niW3tpZqcDnRoK2JoKhk5ObTlNK-7ri4gIBbjBcREYOg&vprv=1&svpuc=1&mime=video%2Fmp4&ns=NeeaRRs03JLnmbK0Mz1RnrkQ&rqh=1&gir=yes&clen=313374400&ratebypass=yes&dur=6287.081&lmt=1734200098082152&fexp=24350590,24350737,24350827,24350975,51326932,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=iWwfCFM_3hlO6w&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgUwyPwY6TK_KNNQb48qR_xVWveZmTPvOKYtyq7GiNps4CIQCIXHx2KG1N_oJGKBTWTx0Qim4kK_ysb0aVXyr8e8JUZA%3D%3D&title=%D8%A7%D9%84%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%A6%D9%8A%D8%A9%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%202024%20%20%F0%9F%93%A2%D8%A7%D9%84%D9%86%D8%A8%D8%A7%D8%AA%20%D9%83%D8%A7%D9%85%D9%84%D9%8B%D8%A7%20%D9%81%D9%8A%20%D8%A3%D9%82%D9%84%20%D9%85%D9%86%20%D8%B3%D8%A7%D8%B9%D8%AA%D9%8A%D9%86%20%F0%9F%98%8E&rm=sn-15pop9-cbfe7e,sn-nv4sz7z&rrc=79,104&req_id=5086f54cd01a3ee&rms=rdu,au&redirect_counter=2&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1736513577,&mh=A0&mip=156.217.19.229&mm=29&mn=sn-hgn7rn7k&ms=rdu&mt=1736512963&mv=u&mvi=5&pl=14&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRgIhAOqqb4-cjVlLLBdAWKoFCv5Z8AhrLAPkuhaRc93Yq_YPAiEA_JnwP2SgoZk77ht-SHJj5Put-4FTMxtpyNFq90FR9fg%3D"
+    }
+  ],
+  "كيمياء": [
+    {
+      "title": "مراجعة ليله الامتحان للصف الثاني الثانوي 2025 -- م.خالد صقر",
+      "url": "https://rr5---sn-uxaxjvhxbt2u-icxs.googlevideo.com/videoplayback?expire=1736520870&ei=RuCAZ6i8OqLYs8IPmu2l0Aw&ip=2401%3A4900%3A7904%3A4c3b%3A11d0%3Ae456%3A1f23%3Ae4df&id=o-ACEQIHLc-zh-GrhxV25yllKDq4NN3Io_VocuxpBoftjk&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AfMhrI9T2blOFUo7eNyc9_Wnr3vbDuzY5kzajfDAe_xn54nhyRiRIzmjmk_IFD55VCxIoSPuNmQhVeYY&spc=x-caUKCaSNggVEQkl_v-5QS9DCWOqBn7iasUlMZXgZkKn2ZSDg360xT0ZNLSDwhP6w&vprv=1&svpuc=1&mime=video%2Fmp4&ns=JIvqnfrLzTdfr3-jVFMcmwoQ&rqh=1&gir=yes&clen=361560365&ratebypass=yes&dur=7672.035&lmt=1736227556170350&fexp=24350590,24350737,24350827,24350974,24350978,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=YooL3nJ79dIE_A&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgCriqht2C1q3La3t8yaf87Fr_HIZr5RHbP1Gcsojwuy4CIQCkHi-3Nohx9q-qx_l2Y0p5LuiDhPM3NiT5OUbg8X36Dg%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%84%D9%8A%D9%84%D9%87%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20%D9%84%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%202025%20%7C%7C%20%D9%85.%D8%AE%D8%A7%D9%84%D8%AF%20%D8%B5%D9%82%D8%B1&redirect_counter=1&rm=sn-cvhzd7s&rrc=104&req_id=be8a98d99dca3ee&cms_redirect=yes&ipbypass=yes&met=1736513621,&mh=Zw&mip=156.217.19.229&mm=31&mn=sn-uxaxjvhxbt2u-icxs&ms=au&mt=1736513110&mv=m&mvi=5&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRgIhANdXrGUZzIBAzLdbB2cOBy7Y36rDHj0-PsC3AuYpVPmcAiEAj9BulkNJVOdS2WvD7iFmS9jUIOKLKbGpvlVOAnifHq4%3D"
+    },
+    {
+      "title": "منهج الصف الثانى كاملاً فى محاضرة واحده🫰🏻إسمعها…تقفل الإمتحان🫡",
+      "url": "https://rr5---sn-hgn7rnee.googlevideo.com/videoplayback?expire=1736535351&ei=1xiBZ5fXLLD2xN8Ploe_qAc&ip=154.208.50.15&id=o-AAgb9GzqkuWV6tYRsnbbhb-wkYPjlPItJndy-ggh4rnl&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-Od2ypjYSzwLyOjbZqcBW3JDVBjaN6IWBiGbGxa0hG5Jdh1xYogrE0Sq45Oqm56H4BLpt4Tzd6h&spc=9kzgDUL3LvO4jZX36LVcTBtY743xK-qs9DMIW8Nox_4-q22lfJdWU7i2O5UPkN2C2g&vprv=1&svpuc=1&mime=video%2Fmp4&ns=tIr8iiyjy7AUmlf1zQp1ECgQ&rqh=1&gir=yes&clen=2192290162&ratebypass=yes&dur=42781.350&lmt=1728182570167700&fexp=24350590,24350737,24350827,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=9hqxO_Jn2sBrDQ&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIgFtVzvFtz3hLLrEPWUiZGROEhwNZTwk8a0wajudlIUe4CIEn-Rrzcig0aVKqkkXufwG6acIaUbAC9IKDlRvAqSvTL&title=%D9%85%D9%86%D9%87%D8%AC%20%D8%A7%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%89%20%D9%83%D8%A7%D9%85%D9%84%D8%A7%D9%8B%20%D9%81%D9%89%20%D9%85%D8%AD%D8%A7%D8%B6%D8%B1%D8%A9%20%D9%88%D8%A7%D8%AD%D8%AF%D9%87%F0%9F%AB%B0%F0%9F%8F%BB%D8%A5%D8%B3%D9%85%D8%B9%D9%87%D8%A7%E2%80%A6%D8%AA%D9%82%D9%81%D9%84%20%D8%A7%D9%84%D8%A5%D9%85%D8%AA%D8%AD%D8%A7%D9%86%F0%9F%AB%A1%F0%9F%AB%B6%F0%9F%8F%BB%F0%9F%A4%A9%F0%9F%8E%AF&rm=sn-poj5caxpouxgoxu-aixl7s,sn-hgney76&rrc=79,104&req_id=fc238c812d50a3ee&rms=rdu,au&redirect_counter=2&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1736513769,&mh=yK&mip=156.217.19.229&mm=29&mn=sn-hgn7rnee&ms=rdu&mt=1736512868&mv=m&mvi=5&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhALOF2Bpnjb8tugjHKi3rVUJdeeifKG_iiT5biwGOBsExAiAIbHq5F4ejJTuZb0EcAu0pkjN-4z43uNKUZqoHIFYY9Q%3D%3D"
+    }
+  ],
+  "فيزياء": [
+    {
+      "title": "مراجعه فيزياء تانيه ثانوي الترم الاول - المنهج كامل",
+      "url": "https://rr1---sn-hgn7rn7k.googlevideo.com/videoplayback?expire=1736535398&ei=BhmBZ6_8D56B9fwP-6nu4AY&ip=124.40.251.113&id=o-AAtc0Z01LCpXMUwJvIbMU1R3pfIOqWdxcr2hVEesUKhz&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-Pfz3yGNjIEae7_9966rzqBEEsaK39Bk8jo2z48a05YhcjrHdu4GSupjfg1e3byD5HxzraPvNFW&spc=9kzgDfz8kEhWLOihTdDDwMHEDj8lm-s2De6TBOqZvahnycFmG61dKHs0C-N3TXkztQ&vprv=1&svpuc=1&mime=video%2Fmp4&ns=dCF7Y92Uvw5uWQqdt3mxb8oQ&rqh=1&gir=yes&clen=542577596&ratebypass=yes&dur=11829.313&lmt=1735722651975868&fexp=24350590,24350737,24350827,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=KW-ZQ5XscAYxSg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgXEKbnFRBeMEjHxysirGjZ_BDa0JXQoWXRzPyUjBYekECIQCEIGwyJk_AKQBZzEWF8xftt799W6mX_i4ksw5SnPnt7g%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D9%81%D9%8A%D8%B2%D9%8A%D8%A7%D8%A1%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%20-%20%D8%A7%D9%84%D9%85%D9%86%D9%87%D8%AC%20%D9%83%D8%A7%D9%85%D9%84&rm=sn-jcopn2-jb3z7l,sn-npozs7z&rrc=79,104&req_id=63110809e5e3a3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736513819,&mh=_f&mip=156.217.19.229&mm=29&mn=sn-hgn7rn7k&ms=rdu&mt=1736513344&mv=m&mvi=1&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhAPlRrDg-4Gwsw0RCrzNYdqpp3UNdexhHJssLbA7WvEDCAiB1ndLXEDYqD0CWmzGBBLay6JvR5fPEyl-uLOzWL3aOqA%3D%3D"
+    },
+    {
+      "title": "مراجعه فيزياء تانيه ثانوي الترم الاول 2025 - مراجعه ليله الامتحان فيزياء تانيه",
+      "url": "https://rr4---sn-hgn7yn7s.googlevideo.com/videoplayback?expire=1736535468&ei=TBmBZ83JB_6ii9oP9qjimQg&ip=89.143.213.201&id=o-AOnE8SeEChxDsqYeVMscUznSsF7aruUfigcQ-EXKTeTF&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI8Nd8KIKYDElWVq1Np7D8viSUBob4e81IO46r4IQ9sEJS7Obw5XN1gyHlRyHMRiJJysXi4XPym8&spc=x-caUHAACRKpSe86H9f8Qgv_BjDqGuPZ0FYgJvP7VyYv2SIYtfmAWnSEXeZuxam7iw&vprv=1&svpuc=1&mime=video%2Fmp4&ns=FWSV1B1NJOHibdhJPhTYD1sQ&rqh=1&gir=yes&clen=523148733&ratebypass=yes&dur=11546.168&lmt=1734860418368784&fexp=24350590,24350737,24350827,24350972,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5438434&n=g9kMIiZWLe-W-g&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgSqM2NdFX6W81LOrk6s8ZJuAt3g40nJJYK6E2fW3OXKcCIQCELExWtSTJNYTmeC31SCn5RXbUDApebvOzfNKus3SWXA%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D9%81%D9%8A%D8%B2%D9%8A%D8%A7%D8%A1%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%202025%20%7C%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D9%84%D9%8A%D9%84%D9%87%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20%D9%81%D9%8A%D8%B2%D9%8A%D8%A7%D8%A1%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%7C%20%D9%85%D8%AD%D9%85%D8%AF%20%D8%B3%D9%85%D9%8A%D8%B1&rm=sn-uxax3vhna-aw0s7l,sn-hpadl7s&rrc=79,104&req_id=669fecca0819a3ee&rms=rdu,au&redirect_counter=2&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1736513895,&mh=oi&mip=156.217.19.229&mm=29&mn=sn-hgn7yn7s&ms=rdu&mt=1736512868&mv=m&mvi=4&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhALvvfPqnM2GeVtyqRfUU8IFdGd3KwR8uf986JCw9_M3EAiB0yWZaM586QeYeWnY9ImwmRjB2EWqQv8kCi_iSSfFzCA%3D%3D"
+    },
+    {
+      "title": "هدية 2ثانوي -- مراجعة الترم الاول كاملا شرح تفصيلي فيزياء+ حل",
+      "url": "https://rr2---sn-hgn7ynek.googlevideo.com/videoplayback?expire=1736535522&ei=ghmBZ-e5M6jF1d8PoY2O2QY&ip=27.71.121.54&id=o-AM5p50f9eC0xJXvo3bF96YNacH9Jg4r1PcLw75MpELGH&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-NZCBdVXBfjZpHawx0KY52ZVnBi5gdbtloF2inUdJFnPHdbSR-199e5wEBuG2oY1GEKhSZ8aYzG&spc=9kzgDVuR9Bi2pozfJ2DihOsO5X_YXJD9JMYtr1h7CQBgA2whk1EYbt0PzFiixRhkxA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=ZnEPUnY-yTKecZ5i9xW3K-EQ&rqh=1&gir=yes&clen=1128842975&ratebypass=yes&dur=24964.469&lmt=1735800429911028&fexp=24350590,24350737,24350827,24350860,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=8fKDp_uJC7DHJw&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgC0XwFYPfnNFz7TKUdOTz_5208fFXIqP6HxiasYh_fx8CIQCoNhiW4gyimLMNLUIQNHjwl3HgJ6qBrUGPytY_WpAfJA%3D%3D&title=%D9%87%D8%AF%D9%8A%D8%A9%202%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%3A-%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%20%D9%83%D8%A7%D9%85%D9%84%D8%A7%20%D8%B4%D8%B1%D8%AD%20%D8%AA%D9%81%D8%B5%D9%8A%D9%84%D9%8A%20%D9%81%D9%8A%D8%B2%D9%8A%D8%A7%D8%A1%2B%20%D8%AD%D9%84%20%D8%B9%D9%84%D9%8A%20%D9%83%D9%84%20%D9%81%D9%83%D8%B1%D9%87&rm=sn-8pxuuxa-i5oll7d,sn-8pxuuxa-i5oz77e,sn-i3bdl7e&rrc=79,79,104&req_id=e914f4147ccba3ee&cmsv=e&rms=nxu,au&redirect_counter=3&cms_redirect=yes&ipbypass=yes&met=1736513948,&mh=x_&mip=156.217.19.229&mm=30&mn=sn-hgn7ynek&ms=nxu&mt=1736513652&mv=u&mvi=2&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhAPhgPn5TuiiDrZtRBTqXnhF6ipyCB4PCs_XFLxj9k3gpAiBIMa2HR9x8r26o-3MgUIftYIt-O44l7MAJAUAtFlLHOQ%3D%3D"
+    }
+  ],
+  "إنجليزي": [
+    {
+      "title": "في ساعة واحدة مراجعة قواعد المنهج بالكامل Grammar انجليزي تانية ثانوي",
+      "url": "https://rr2---sn-hgn7rn7k.googlevideo.com/videoplayback?expire=1736535580&ei=vBmBZ7nADrer9fwP-brH4Qk&ip=2001%3A448a%3A1082%3A199a%3Ab1d4%3Af5a0%3A9d35%3Abc9e&id=o-AN1m4cvyun14TLe7Gzu_nUVnqG6fMo44nDaEN4Ub3Csk&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-O1K_SwSxQWPTvgOjUu_7pCBjSzWt2Ub754nkb-7m6LSNTgcNPeDem403Ro9sgXHWiKP193fjlB&spc=9kzgDak2ic3bxn7cmyZrgA-bbaaLwO_pzrL-Gbic7lotE6uqiTnREFd1H9_OhOyYow&vprv=1&svpuc=1&mime=video%2Fmp4&ns=c65Cpn4twvp3IKgEwgTLmIMQ&rqh=1&gir=yes&clen=127799093&ratebypass=yes&dur=2448.195&lmt=1705273467703590&fexp=24350590,24350737,24350759,24350827,24350859,24350974,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=cdtJvr7dPJ_wQA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRAIgHyfg935RopyXCQD9NGH40SpCYGo6GhdIV6S8dOVA1XYCIAbEOcNhlTZg43bIXxsQl8Jigo4at6KKS97C9u2zhx9u&title=%D9%81%D9%8A%20%D8%B3%D8%A7%D8%B9%D8%A9%20%D9%88%D8%A7%D8%AD%D8%AF%D8%A9%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%82%D9%88%D8%A7%D8%B9%D8%AF%20%D8%A7%D9%84%D9%85%D9%86%D9%87%D8%AC%20%D8%A8%D8%A7%D9%84%D9%83%D8%A7%D9%85%D9%84%20Grammar%20%D8%A7%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%202024&rm=sn-2uuxa3vh-230s7l,sn-npo6e7z&rrc=79,104&req_id=ea37fa00686ca3ee&cmsv=e&rms=rdu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736513995,&mh=ec&mip=156.217.19.229&mm=29&mn=sn-hgn7rn7k&ms=rdu&mt=1736513588&mv=m&mvi=2&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIgYH0dnYB3OjadIWkG069IGp9XkOy2aH-s-6eYm-cbNaUCIQDy9ikZhl1cuR8U1jRBDGn5BiCVbZdrPBDZheeBFQAXKQ%3D%3D"
+    },
+    {
+      "title": "مراجعة قواعد المنهج بالكامل Grammar انجليزي تانية ثانوي الترم الاول 2025",
+      "url": "https://rr2---sn-hgn7rnll.googlevideo.com/videoplayback?expire=1736535632&ei=8BmBZ_ecCNne7OsPwseT0Aw&ip=2401%3A4900%3A1f3d%3A324e%3Aa0b6%3Ac79%3Afc26%3Aae17&id=o-AKj089NDu9iIpnWPtUt_nxEQDzIw_BNPHbxORUlRbTZB&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AfMhrI_aVKEX0uoW_luHOe-izzKnTs2Tl3y8ZH3DqFbEsN5O2ETKFbbe0Vue0BXqDpdxPVXwy7RqRpys&spc=x-caUJOy69QGmVB_qkXquO0uW6Pz_ZKAnuf_6NcHQfKmZvL6ordcamplmOECmB-mNQ&vprv=1&svpuc=1&mime=video%2Fmp4&ns=yrdOqBYHyUSGqa32UJdlzp8Q&rqh=1&gir=yes&clen=229685252&ratebypass=yes&dur=4719.316&lmt=1735774223224357&fexp=24350590,24350737,24350827,24350974,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=TPKEfR79zUUEmA&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIhAIghyY03jMH0dl2UmvQj2z0OWXFpEv6jkpiL0fXiV2j4AiAdN27l0GzUChhFHU81J04dNYV33dUV6ZQV9B6_KS9lCQ%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%82%D9%88%D8%A7%D8%B9%D8%AF%20%D8%A7%D9%84%D9%85%D9%86%D9%87%D8%AC%20%D8%A8%D8%A7%D9%84%D9%83%D8%A7%D9%85%D9%84%20Grammar%20%D8%A7%D9%86%D8%AC%D9%84%D9%8A%D8%B2%D9%8A%20%D8%AA%D8%A7%D9%86%D9%8A%D8%A9%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%202025&rm=sn-ci5gup-a3v67z,sn-ci5gup-qxaed7z,sn-qxals7l&rrc=79,79,104&req_id=c1cc62970712a3ee&cmsv=e&rms=nxu,au&redirect_counter=3&cms_redirect=yes&ipbypass=yes&met=1736514053,&mh=Iv&mip=156.217.19.229&mm=30&mn=sn-hgn7rnll&ms=nxu&mt=1736513652&mv=u&mvi=2&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIhALBqV9Z7atPiGy50VHm9cOYG4EGiihFrRKEWqydMAqjWAiBgYM_EJuSSBAnfzYmvgxWD4EL1MNBxA4jvytaCSu29OQ%3D%3D"
+    }
+  ],
+  "رياضة تطبيقية": [
+    {
+      "title": "مراجعة ليلة الامتحان استاتيكا للصف الثاني الثانوي ترم اول علمي - الجزء الاول",
+      "url": "https://rr3---sn-hgn7rnee.googlevideo.com/videoplayback?expire=1736535691&ei=KxqBZ5-YA7_K6dsPmZ_uKA&ip=87.240.209.27&id=o-ABqPZWxdhnfwT6JZT9mbyzpujPLQePWwCzDrcwVUOw-x&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-PLI_sgl3VGtTi1NTf-f6O_eGWv-0sxQSDhm-pDdBB6yswSYS6e7v--KwYJE52fcmhKbLejft4P&spc=9kzgDSugayAwu9AV0VWZTSSviyl7b_UON-DPEbfgxKFziziG_PjAie-w_NEVKB7W7g&vprv=1&svpuc=1&mime=video%2Fmp4&ns=3xcfLDyAYbcfDHzBii6FlTsQ&rqh=1&gir=yes&clen=224667314&ratebypass=yes&dur=11641.626&lmt=1736043869584803&fexp=24350590,24350737,24350827,24350919,24350974,51326932,51331020,51335594,51353497,51371294&c=MWEB&sefc=1&txp=5538434&n=kJlzsYwOr1efhQ&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgfNfKUj2mtwwk4lo1tGtt90FEsXFXbb4bjd_OdBOU2JMCIQCe5wzFeEENwnaTHPwBuGAbDrSzpz1J9zyTpHbpjUKItw%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%84%D9%8A%D9%84%D8%A9%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86%20%D8%A7%D8%B3%D8%AA%D8%A7%D8%AA%D9%8A%D9%83%D8%A7%20%D9%84%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%AA%D8%B1%D9%85%20%D8%A7%D9%88%D9%84%20%D8%B9%D9%84%D9%85%D9%8A%20%7C%20%D8%A7%D9%84%D8%AC%D8%B2%D8%A1%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%20%D8%AA%D9%84%D8%AE%D9%8A%D8%B5%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D8%A7%D8%AA%D9%8A%D9%83%D8%A7%20%7C%D8%AD%D8%B5%D8%A9%207&rm=sn-a0jpm-a0md7e,sn-4g5eks7e&rrc=79,104&req_id=70eedcdbb191a3ee&rms=rdu,au&redirect_counter=2&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1736514106,&mh=Tb&mip=156.217.19.229&mm=29&mn=sn-hgn7rnee&ms=rdu&mt=1736513344&mv=m&mvi=3&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIgQ1Y5ZWmW1-9ehjMs0EwNr1tsUuxZ59oLLiRDuuUHK94CIQCLiFYVGhJ6ZEKYX8f30BJT1veLmPJINUTAXgIuJOYrlw%3D%3D"
+    },
+    {
+      "title": "مراجعه رياضه تطبيقيه تانيه ثانوي الترم الاول 2025 - مراجعة ليلة الامتحان",
+      "url": "https://rr4---sn-hgn7yn7s.googlevideo.com/videoplayback?expire=1736530480&ei=0AWBZ532LK-pssUPpNaSwAc&ip=202.166.205.3&id=o-AKqITvRvaPhlSx3oBzjIUNYPeTRqEOHEDU3c1cB_hZN1&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY2Et-NKdlbdRUEkO5NAL1an3Z6vTe6KtiaxmhaglVoJZmj3sPx3oDOycME0NOLzL4bSsU-Xi5ZGxrFX&spc=9kzgDZTmbHEeElA_CHJYWT6HJyD6aqnkhOSLUXOSqTY7mvzvs9hDXnK-8KXtBB3NWA&vprv=1&svpuc=1&mime=video%2Fmp4&ns=mX5vFxrT8xyVcWQsh32abyQQ&rqh=1&gir=yes&clen=1047272728&ratebypass=yes&dur=23441.565&lmt=1735850048401850&fexp=24350590,24350737,24350827,24350975,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5438434&n=uLKwKzkb2rGxxg&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIhAPG-G3dcBir0eS_0wVtoXpMWDbls-vOAniwa8WNJFcfvAiA79CmVYwY_sgGpSPnSTubj1YcyarLvLGGl0ENH5W3yQA%3D%3D&title=%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D9%87%20%D8%B1%D9%8A%D8%A7%D8%B6%D9%87%20%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%D9%8A%D9%87%20%D8%AA%D8%A7%D9%86%D9%8A%D9%87%20%D8%AB%D8%A7%D9%86%D9%88%D9%8A%20%D8%A7%D9%84%D8%AA%D8%B1%D9%85%20%D8%A7%D9%84%D8%A7%D9%88%D9%84%202025%20%7C%20%D9%85%D8%B1%D8%A7%D8%AC%D8%B9%D8%A9%20%D9%84%D9%8A%D9%84%D8%A9%20%D8%A7%D9%84%D8%A7%D9%85%D8%AA%D8%AD%D8%A7%D9%86&rm=sn-fapo3ox25a-3uhk7d,sn-qxaed7e&rrc=79,104&req_id=4bf78a0d0bc0a3ee&cmsv=e&rms=nxu,au&redirect_counter=2&cms_redirect=yes&ipbypass=yes&met=1736514159,&mh=-p&mip=156.217.19.229&mm=30&mn=sn-hgn7yn7s&ms=nxu&mt=1736513652&mv=u&mvi=4&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIgB_AAU--o7gwApH1Dj6cHPzGKbg4LBYpkn-WjyO7NwsQCIQDSK7X5uPGcpGAqQo6F2GnvDWQR9PieO7Kc4xgDt4ngyA%3D%3D"
+    },
+    {
+      "title": "الصف الثاني الثانوي🔥شرح الاستاتيكا كلها في ڤيديو واحد🔥هام جدا🔥اللي",
+      "url": "https://rr2---sn-uxaxjvhxbt2u-icxs.googlevideo.com/videoplayback?expire=1736535787&ei=ixqBZ4XpN-6_kucP2PHO8A8&ip=91.242.125.233&id=o-ABYiDsZFRJ8xQ6cGpuolNP1Jws8ZN7sp_Lt_tJIvlKI5&itag=18&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&rms=au%2Cau&bui=AfMhrI8_lQ0mAEPRhVE1Y9EYeUOoyegAu7TadzCtvR0UUCXkaEY3uTh5FjflH8cgFAU36BnDYe705fy9&spc=x-caUBeFnZOGFNc2LKf9ov6EZPhDfDM6m0c67T6voObaeZfP81VAlQ9hZ32GpvMfuw&vprv=1&svpuc=1&mime=video%2Fmp4&ns=KkmOj-XrFZYuC2QErOnI1EQQ&rqh=1&gir=yes&clen=439236132&ratebypass=yes&dur=8912.445&lmt=1704788767055685&fexp=24350590,24350737,24350827,24350860,24350974,51326932,51331020,51335594,51353498,51371294&c=MWEB&sefc=1&txp=5538434&n=0_WyGmiuzrtIow&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cspc%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cratebypass%2Cdur%2Clmt&sig=AJfQdSswRQIgVF_OtBjHOhMNGmRum-SJqGC1NZGffr5dbPHwgz42GJkCIQCCtZ8Ti3beq6rFGon-oSmmwAnW0jngB2Jmo4Shz4OFog%3D%3D&title=%D8%A7%D9%84%D8%B5%D9%81%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%8A%20%D8%A7%D9%84%D8%AB%D8%A7%D9%86%D9%88%D9%8A%F0%9F%94%A5%D8%B4%D8%B1%D8%AD%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D8%A7%D8%AA%D9%8A%D9%83%D8%A7%20%D9%83%D9%84%D9%87%D8%A7%20%D9%81%D9%8A%20%DA%A4%D9%8A%D8%AF%D9%8A%D9%88%20%D9%88%D8%A7%D8%AD%D8%AF%F0%9F%94%A5%D9%87%D8%A7%D9%85%20%D8%AC%D8%AF%D8%A7%F0%9F%94%A5%D8%A7%D9%84%D9%84%D9%8A%20%D8%B6%D8%A7%D9%8A%D8%B9%D9%8A%D9%86%20%D9%81%D9%8A%20%D8%A7%D9%84%D9%85%D9%86%D9%87%D8%AC%F0%9F%92%A5%20%23%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D8%A7%D8%AA%D9%8A%D9%83%D8%A7&redirect_counter=1&rm=sn-ab5eed7z&rrc=104&req_id=a5d38ac046c4a3ee&cms_redirect=yes&ipbypass=yes&met=1736514201,&mh=B1&mip=156.217.19.229&mm=31&mn=sn-uxaxjvhxbt2u-icxs&ms=au&mt=1736513836&mv=m&mvi=2&pl=19&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=AGluJ3MwRQIgOaFb1ayZGYQCBvycI4QP7QcWes8iQfK2av4OPSYH9xMCIQC_-UNN_76WXqFdayoHHkoEeRAfRP_arNRwoceomLRVmg%3D%3D"
+    }
+  ]
+    };
+
+        const subjectsNav = document.getElementById('subjects-nav');
+        const videoContainer = document.getElementById('video-container');
+        const watchLaterList = document.getElementById('watch-later-list');
+        const watchLaterItems = document.getElementById('watch-later-items');
+        const toggleWatchLaterBtn = document.getElementById('toggle-watch-later');
+
+        let watchLaterVideos = JSON.parse(localStorage.getItem('watchLaterVideos')) || [];
+
+        function createSubjectButtons() {
+            for (const subject in subjectsData) {
+                const button = document.createElement('button');
+                button.textContent = subject;
+                button.classList.add('subject-btn');
+                button.addEventListener('click', () => displayVideos(subject));
+                subjectsNav.appendChild(button);
+            }
+        }
+
+        function displayVideos(subject) {
+            videoContainer.innerHTML = '';
+            subjectsData[subject].forEach(video => {
+                const videoCard = document.createElement('div');
+                videoCard.classList.add('video-card');
+                videoCard.innerHTML = `
+                    <h3>${video.title}</h3>
+                    <iframe src="${video.url}" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <p class="video-description">${video.description}</p>
+                        <button class="watch-later-btn" data-title="${video.title}">إضافة إلى المشاهدة لاحقًا</button>
+                    </div>
+                `;
+                videoContainer.appendChild(videoCard);
+            });
+            addWatchLaterListeners();
+        }
+
+        function addWatchLaterListeners() {
+            const watchLaterButtons = document.querySelectorAll('.watch-later-btn');
+            watchLaterButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const videoTitle = e.target.getAttribute('data-title');
+                    if (!watchLaterVideos.includes(videoTitle)) {
+                        watchLaterVideos.push(videoTitle);
+                        localStorage.setItem('watchLaterVideos', JSON.stringify(watchLaterVideos));
+                        updateWatchLaterList();
+                        e.target.textContent = 'تمت الإضافة';
+                        e.target.disabled = true;
+                    }
+                });
+            });
+        }
+
+        function updateWatchLaterList() {
+            watchLaterItems.innerHTML = '';
+            watchLaterVideos.forEach(video => {
+                const li = document.createElement('li');
+                li.textContent = video;
+                watchLaterItems.appendChild(li);
+            });
+        }
+
+        toggleWatchLaterBtn.addEventListener('click', () => {
+            watchLaterList.style.display = watchLaterList.style.display === 'none' ? 'block' : 'none';
+        });
+
+        createSubjectButtons();
+        displayVideos(Object.keys(subjectsData)[0]);
+        updateWatchLaterList();
+    </script>
+</body>
+</html>
